@@ -1,0 +1,83 @@
+#炉石助手 · 配置文件（**可安全提交到公开仓库的示例值**）
+#
+# 隐私约定：本文件只放示例值。API Key / 玩家名 / 账号 ID 请写在
+#   config/config.local.yaml   （同目录，已被 .gitignore 忽略）
+# 或直接设环境变量，二者都会覆盖本文件：
+#   1. 环境变量 HS_LLM_API_KEY
+#   2. 环境变量 OPENAI_API_KEY
+#   3. config.local.yaml 的 llm.api_key
+#   4. 本文件的 llm.api_key（留空即可）
+#
+# 复制模板开始：cp config/config.local.yaml.example config/config.local.yaml
+#
+# 常用模型的 base_url / model 写法：
+#   DeepSeek   https://api.deepseek.com/v1        deepseek-chat
+#   通义千问    https://dashscope.aliyuncs.com/compatible-mode/v1  qwen-plus
+#   智谱GLM    https://open.bigmodel.cn/api/paas/v4    glm-4-plus
+#   月之暗面    https://api.moonshot.cn/v1        moonshot-v1-8k
+#   硅基流动    https://api.siliconflow.cn/v1     Qwen/Qwen2.5-72B-Instruct
+#   本地Ollama  http://localhost:11434/v1         qwen2.5:14b（无需 api_key）
+
+# ── 数据源 ────────────────────────────────────────────────
+# Power.log 路径。留空则自动定位最新日志。
+# macOS 通常在 /Applications/Hearthstone/Logs/Hearthstone_<时间戳>/Power.log
+log_path: ""
+
+# ── 身份识别（两项都填最稳） ──────────────────────────────
+# 解决的问题：本机会随先后手在 PlayerID 1↔2 之间来回切换，
+# 所以固定 my_player_id 必然在某些对局指错人（表现为「我方/敌方场面反了」）。
+
+# ① player_name —— 玩家显示名，**主判据**，界面直接显示「我是谁」
+#    用 `hs-copilot whoami --detect` 自动探测：日志中唯一「横跨 PlayerID 1/2」
+#    的那个名字就是本机（自己会随先后手换边，对手则固定一侧）。
+#    解析时通过 FIRST_PLAYER 权威配对：FIRST_PLAYER=1 同时出现在
+#    Player 实体(2/3) 与「名#号」实体上，标记同一个人，据此把名字绑到 PlayerID。
+player_name: "你的炉石显示名"
+
+# ② account_id —— 战网账号 lo 值（Player EntityID=2 ... lo=xxx），**交叉校验**
+#    用同一命令探测。它在整份日志里恒定，可与 player_name 互相印证；
+#    若两者结论冲突，说明配置过期了，请重跑 --detect。
+account_id: ""
+
+# my_player_id仅在前两项都没配置时作为最后兜底，正常情况请忽略。
+my_player_id: 1
+
+# 卡牌数据路径。留空则自动使用项目内 data/cards_zhCN.json。
+# 若填写相对路径，则相对于本配置文件所在目录解析。
+cards_path: "../data/cards_zhCN.json"
+
+# ── 套牌（可选） ──────────────────────────────────────────
+# 留空即可：工具会自动读同目录 Decks.log 里最后一次
+# 「Finding Game With Deck:」块，识别本局用的是哪副牌（换卡组自动跟上）。
+# 手填套牌码优先级更高，用于 Decks.log 缺失或想强制指定套牌时。
+# 套牌用于：牌库推演、关键牌追踪，以及**整局规划**（见 watch.plan_enabled）。
+deckstring: ""
+
+# ── LLM（OpenAI 兼容接口） ────────────────────────────────
+llm:
+  base_url: "https://api.deepseek.com/v1"
+  api_key: ""                 # ← 留空；真实密钥放 config.local.yaml 或环境变量
+  model: "deepseek-chat"
+  temperature: 0.3      # 低温度保证建议稳定
+  max_tokens: 900       # 建议要快：只输出结论/操作序/风险，不需要长文
+  timeout: 30.0
+  max_retries: 2
+  auto_correct: true    # 校验器驳回方案时，把具体原因回传模型自动改正一次（最多一次）
+
+# ── 实时监听 ──────────────────────────────────────────────
+watch:
+  trigger_on_my_turn: true   # 轮到我方回合时分析（每个我方回合恰好一次）
+  trigger_on_mulligan: false # 换牌阶段不单独给建议：用户要求只在「我的回合开始」出建议，
+                             # 且此时局面/英雄血量尚未建立，模型会基于 0 血等脏数据乱答
+  voice: false               # 语音播报（需系统 TTS 支持）
+  cooldown: 3.0              # 两次分析最小间隔（秒）
+  plan_enabled: true         # 整局规划：读完整套牌 → 每局生成一次跨回合战略，
+                             # 之后每回合建议都服从它（只在阶段推进时重评，不拖慢回合建议）
+
+# ── 隐私 ──────────────────────────────────────────────────
+# 发给大模型之前，自动移除玩家显示名 / 名#编号 / 战网账号 / 日志时间戳 /
+# 原始 tag / 本机绝对路径 / 形似 API Key 的字符串。
+# payload 本身已用「我方 / 对手」分组表达身份，脱敏不影响判断，反而能避免
+# 模型靠名字猜 PlayerID（这个名字与 PlayerID 无固定关系，先后手会换边）。
+privacy:
+  redact: true

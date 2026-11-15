@@ -1,0 +1,12 @@
+# 本机私有配置模板。
+#   cp config/config.local.yaml.example config/config.local.yaml
+# config.local.yaml 已被 .gitignore 忽略，不会进入公开仓库。
+# 这里的值会覆盖 config/config.yaml 中的示例值；也可以改用环境变量
+# HS_LLM_API_KEY / OPENAI_API_KEY（优先级更高）。
+
+llm:
+  api_key: "sk-在此填入你的密钥"
+
+# 用 `hs-copilot whoami --detect` 探测这两项；留空则只用自动判定。
+player_name: "你的炉石显示名"
+account_id: ""

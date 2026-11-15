@@ -1,0 +1,29 @@
+# ── Python ────────────────────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── 本地私有配置（API Key / 玩家名 / 账号 ID）──────────────
+# config.yaml 是公开示例，config.local.yaml 才是本机真值，绝不入库。
+config/config.local.yaml
+.env
+.env.*
+!.env.example
+
+# ── 本机产物 ──────────────────────────────────────────────
+*.log
+.DS_Store
+# 界面截图含本机玩家昵称，属于个人产物，不纳入公开仓库
+docs/*.png
+
+# ── 编辑器 ────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp

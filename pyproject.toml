@@ -1,0 +1,28 @@
+[project]
+name = "hearthstone-copilot"
+version = "0.1.0"
+description = "炉石传说 AI 助手（macOS）—— 读取 Power.log 还原局面，用大模型给战术建议"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "hearthstone-copilot contributors" }]
+keywords = ["hearthstone", "llm", "power-log", "deck-tracker", "macos"]
+dependencies = [
+    "openai>=1.0",
+    "pyyaml>=6.0",
+    "typer>=0.12",
+    "rich>=13.0",
+    "pyobjc-core>=10.0",
+    "pyobjc-framework-Cocoa>=10.0",
+    "pyobjc-framework-Quartz>=10.0",
+]
+
+[project.scripts]
+hs-copilot = "hs_copilot.cli:app"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
