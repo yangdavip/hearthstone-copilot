@@ -20,6 +20,11 @@ dependencies = [
 [project.scripts]
 hs-copilot = "hs_copilot.cli:app"
 
+[project.urls]
+Homepage = "https://github.com/yangdavip/hearthstone-copilot"
+Repository = "https://github.com/yangdavip/hearthstone-copilot"
+Issues = "https://github.com/yangdavip/hearthstone-copilot/issues"
+
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"

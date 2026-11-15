@@ -11,7 +11,7 @@ Power.log ──► 状态还原 ──► 局面 JSON ──► 大模型 ─�
 ## 快速开始
 
 ```bash
-git clone <你的仓库地址> hearthstone-copilot
+git clone https://github.com/yangdavip/hearthstone-copilot.git hearthstone-copilot
 cd hearthstone-copilot
 
 # 0. 安装（Python 3.10+，macOS）
@@ -240,9 +240,14 @@ deckstring: ""          # 留空自动读 Decks.log 的「Finding Game With Deck
 
 llm:
   base_url: "https://api.deepseek.com/v1"
-  api_key: ""            # 或用环境变量 HS_LLM_API_KEY
+  api_key: ""            # 留空！真实密钥放 config.local.yaml 或 HS_LLM_API_KEY
   model: "deepseek-chat"
   temperature: 0.3
+  auto_correct: true     # 校验器驳回时把原因回传模型自动改正一次
+  max_tokens: 900
+
+privacy:
+  redact: true           # 发往模型前脱敏，见文末「开源与合规」
 ```
 
 任何 OpenAI 兼容接口都能用，改`base_url` + `model` 即可：
